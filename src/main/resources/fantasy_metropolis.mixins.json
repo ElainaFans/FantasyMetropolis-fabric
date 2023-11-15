@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "turou.fantasy_metropolis.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "GuiGraphicsMixin"
+  ]
+}

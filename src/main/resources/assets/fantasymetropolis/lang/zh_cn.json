@@ -1,0 +1,9 @@
+﻿{
+  "item.fantasy_metropolis.whiter_sword": "§6§l淵羽「§e§l白§6§l」§f",
+  "tooltip.whiter_sword.title": "淵羽「白」",
+  "tooltip.skill.hint": "次元剥离",
+  "tooltip.skill.range": "范围: ",
+  "tooltip.attack.damage": "无限",
+  "tooltip.attack.hint": "§9攻击伤害",
+  "whiter_sword.kill_range": "§3§k§b§l空间裂解§3§k§f"
+}

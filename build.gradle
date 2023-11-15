@@ -20,6 +20,11 @@ repositories {
          name = 'ParchmentMC'
          url = 'https://maven.parchmentmc.org'
     }
+
+	maven {
+		name = "FelNull Maven"
+		url = "https://maven.felnull.dev"
+	}
 }
 
 loom {
@@ -30,7 +35,7 @@ loom {
 			name "Data Generation"
 			vmArg "-Dfabric-api.datagen"
 			vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-			vmArg "-Dfabric-api.datagen.modid=fantasymetropolis"
+			vmArg "-Dfabric-api.datagen.modid=fantasy_metropolis"
  
 			runDir "build/datagen"
 		}
@@ -51,6 +56,9 @@ dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	modApi "dev.felnull:special-model-loader:1.2.0"
+	include "dev.felnull:special-model-loader:1.2.0"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
