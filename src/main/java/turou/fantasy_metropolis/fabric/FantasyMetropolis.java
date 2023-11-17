@@ -7,5 +7,7 @@ public class FantasyMetropolis implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		RegisterHandler.registerItems();
+		EventHandler.registerEvents();
+		NetworkHandler.registerPackets();
 	}
 }

@@ -6,6 +6,11 @@
     "defaultRequire": 1
   },
   "client": [
-    "GuiGraphicsMixin"
+    "ScreenMixin",
+    "TooltipRenderUtilMixin"
+  ],
+  "mixins": [
+    "LivingEntityMixin",
+    "PlayerMixin"
   ]
 }
