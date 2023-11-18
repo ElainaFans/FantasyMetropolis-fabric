@@ -1,15 +1,34 @@
 package turou.fantasy_metropolis.fabric.client;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
+import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TooltipRenderer {
     private static GuiGraphics guiGraphicsContext;
+    private static ItemStack itemStackContext;
 
     public static void setGuiGraphicsContext(GuiGraphics guiGraphics) {
         guiGraphicsContext = guiGraphics;
+    }
+
+    public static void setItemStackContext(ItemStack itemStackContext) {
+        TooltipRenderer.itemStackContext = itemStackContext;
+    }
+
+    public static boolean shouldRender() {
+        return itemStackContext != null && itemStackContext.getItem() instanceof ItemSwordWhiter;
     }
 
     private static ResourceLocation getPath(String part) {
@@ -23,6 +42,20 @@ public class TooltipRenderer {
     private static void innerBlit(ResourceLocation pAtlasLocation, int pX, int pY, int pWidth, int pHeight) {
         // duration maybe negative, we don't render negative width
         if (pWidth > 0) guiGraphicsContext.blit(pAtlasLocation, pX, pY, 0, 0, pWidth, pHeight, pWidth, pHeight);
+    }
+
+    public static List<ClientTooltipComponent> getComponents() {
+        int range = itemStackContext.getOrCreateTag().getInt("range");
+        List<Component> list = Lists.newArrayList();
+
+        list.add(Component.literal(AnimationWorker.marqueeTitle(I18n.get("tooltip.whiter_sword.title"))));
+        list.add(1, Component.literal(ChatFormatting.LIGHT_PURPLE + "+ "  + I18n.get("tooltip.skill.hint")));
+        list.add(2, Component.literal(ChatFormatting.BLUE + "+ "  + I18n.get("tooltip.skill.range") + range));
+        list.add(3, Component.literal(""));
+        list.add(4, Component.literal(ChatFormatting.BLUE + "+ " + AnimationWorker.marqueeDamage(I18n.get("tooltip.attack.damage")) + " " + I18n.get("tooltip.attack.hint")));
+
+        var tooltipLines = Lists.transform(list, Component::getVisualOrderText);
+        return tooltipLines.stream().map(ClientTooltipComponent::create).collect(Collectors.toList());
     }
 
     public static void renderCharacter(int x, int y) {

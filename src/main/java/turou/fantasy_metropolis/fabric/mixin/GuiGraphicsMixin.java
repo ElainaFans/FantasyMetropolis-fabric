@@ -1,0 +1,26 @@
+package turou.fantasy_metropolis.fabric.mixin;
+
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import turou.fantasy_metropolis.fabric.client.TooltipRenderer;
+
+import java.util.List;
+
+@Mixin(GuiGraphics.class)
+public class GuiGraphicsMixin {
+    @Inject(method = "renderTooltipInternal", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void renderTooltipInternal(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY, ClientTooltipPositioner tooltipPositioner, CallbackInfo ci) {
+        if (TooltipRenderer.shouldRender()) {
+            components.clear();
+            components.addAll(TooltipRenderer.getComponents());
+        }
+    }
+}

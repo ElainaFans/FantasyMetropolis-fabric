@@ -6,7 +6,8 @@
     "defaultRequire": 1
   },
   "client": [
-    "ScreenMixin",
+    "AbstractContainerScreenMixin",
+    "GuiGraphicsMixin",
     "TooltipRenderUtilMixin"
   ],
   "mixins": [

@@ -14,8 +14,10 @@ public class TooltipRenderUtilMixin {
     @Inject(method = "renderTooltipBackground", at=@At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private static void renderTooltipBackground(GuiGraphics guiGraphics, int x, int y, int width, int height, int z, CallbackInfo ci) {
         TooltipRenderer.setGuiGraphicsContext(guiGraphics);
-        TooltipRenderer.renderBackground(x, y, width, height);
-        TooltipRenderer.renderCharacter(x, y);
-        ci.cancel();
+        if (TooltipRenderer.shouldRender()) {
+            TooltipRenderer.renderBackground(x, y, width, height);
+            TooltipRenderer.renderCharacter(x, y);
+            ci.cancel();
+        }
     }
 }
