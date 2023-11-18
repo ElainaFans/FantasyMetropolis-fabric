@@ -19,6 +19,13 @@ public class AbstractContainerScreenMixin {
 
     @Inject(method = "render", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+        if (this.hoveredSlot == null || !this.hoveredSlot.hasItem()) {
+            TooltipRenderer.setItemStackContext(null);
+        }
+    }
+
+    @Inject(method = "renderTooltip", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void renderTooltip(GuiGraphics guiGraphics, int x, int y, CallbackInfo ci) {
         if (this.hoveredSlot != null && this.hoveredSlot.hasItem()) {
             ItemStack itemStack = this.hoveredSlot.getItem();
             TooltipRenderer.setItemStackContext(itemStack);
