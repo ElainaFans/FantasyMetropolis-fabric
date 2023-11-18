@@ -57,14 +57,11 @@ public class EventHandler {
     }
 
     public static void onLivingEntityHurt(LivingEntity receiver, DamageSource damageSource, float damageAmount, CallbackInfo ci) {
-        // arrow damage enhanced if source player owned the sword
-        if (damageSource.isIndirect()) {
-            var attacker = damageSource.getEntity();
-            if (attacker instanceof Player playerAttacker) {
-                if (PlayerUtil.hasSword(playerAttacker)) {
-                    // Use hurt trigger to get real effect (use magic damage to prevent recursion).
-                    receiver.hurt(receiver.level().damageSources().magic(), Float.MAX_VALUE);
-                }
+        var attacker = damageSource.getEntity();
+        if (attacker instanceof Player playerAttacker) {
+            if (PlayerUtil.hasSword(playerAttacker)) {
+                // Use hurt trigger to get real effect (use magic damage to prevent recursion).
+                receiver.hurt(receiver.level().damageSources().magic(), Float.MAX_VALUE);
             }
         }
     }
