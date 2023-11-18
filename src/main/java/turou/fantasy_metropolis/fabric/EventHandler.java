@@ -47,19 +47,6 @@ public class EventHandler {
             var result = AnimationWorker.increaseTimer(baseFrameTime * speedFactor);
             if (result >= 20) AnimationWorker.resetTimer();
         });
-
-        ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            ScreenMouseEvents.allowMouseScroll(screen).register((currentScreen, x, y, horizontalAmount, verticalAmount) -> {
-                LocalPlayer player =  Minecraft.getInstance().player;
-                if (player != null && player.isShiftKeyDown() && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSwordWhiter) {
-                    FriendlyByteBuf byteBuf = PacketByteBufs.create();
-                    byteBuf.writeInt((int) verticalAmount);
-                    ClientPlayNetworking.send(NetworkHandler.SCROLL_SWORD_PACKET, byteBuf);
-                    return false;
-                }
-                return true;
-            });
-        });
     }
 
     // We use mixin to solve our problems.

@@ -24,7 +24,6 @@ public class DamageUtil {
             var damageSource = level.damageSources().magic();
             entity.getCombatTracker().recordDamage(damageSource, Float.MAX_VALUE);
             entity.setHealth(0.0F);
-            entity.remove(Entity.RemovalReason.KILLED);
             if (entity instanceof Player player) {
                 punishPlayer(player);
             }
