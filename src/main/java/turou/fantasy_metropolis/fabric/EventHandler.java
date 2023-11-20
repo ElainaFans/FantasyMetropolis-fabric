@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import turou.fantasy_metropolis.fabric.client.AnimationWorker;
+import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
 public class EventHandler {
@@ -60,8 +61,10 @@ public class EventHandler {
         var attacker = damageSource.getEntity();
         if (attacker instanceof Player playerAttacker) {
             if (PlayerUtil.hasSword(playerAttacker)) {
-                // Use hurt trigger to get real effect (use magic damage to prevent recursion).
-                receiver.hurt(receiver.level().damageSources().magic(), Float.MAX_VALUE);
+                if (damageSource.isIndirect() || ((Player) attacker).getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSwordWhiter) {
+                    // Use hurt trigger to get real effect (use magic damage to prevent recursion).
+                    receiver.hurt(receiver.level().damageSources().magic(), Float.MAX_VALUE);
+                }
             }
         }
     }
