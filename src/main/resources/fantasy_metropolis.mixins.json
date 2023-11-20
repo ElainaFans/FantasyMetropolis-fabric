@@ -7,11 +7,14 @@
   },
   "client": [
     "AbstractContainerScreenMixin",
+    "CreativeModeInventoryScreenMixin",
     "GuiGraphicsMixin",
     "MouseHandlerMixin",
     "TooltipRenderUtilMixin"
   ],
   "mixins": [
+    "InventoryMenuMixin",
+    "InventoryMixin",
     "LivingEntityMixin",
     "PlayerMixin"
   ]
