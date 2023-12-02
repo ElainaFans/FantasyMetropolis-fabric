@@ -20,6 +20,10 @@ public class InventoryMixin {
     @Mutable
     @Final
     @Shadow
+    public final Player player;
+    @Mutable
+    @Final
+    @Shadow
     public final NonNullList<ItemStack> items;
     @Mutable
     @Final
@@ -37,6 +41,7 @@ public class InventoryMixin {
     public final NonNullList<ItemStack> accessories = NonNullList.withSize(1, ItemStack.EMPTY);
 
     private InventoryMixin() {
+        this.player = null;
         items = null;
         armor = null;
         offhand = null;
@@ -49,6 +54,28 @@ public class InventoryMixin {
         assert armor != null;
         assert offhand != null;
         compartments = ImmutableList.of(items, armor, offhand, accessories);
+    }
+
+    /**
+     * @author TuRou
+     * @reason It's hard to modify iterator using inject
+     */
+    @Overwrite
+    public void dropAll() {
+        assert items != null;
+        assert armor != null;
+        assert offhand != null;
+        var original_compartments = ImmutableList.of(items, armor, offhand);
+        for (var list : original_compartments) {
+            for(int i = 0; i < list.size(); ++i) {
+                ItemStack itemStack = list.get(i);
+                if (!itemStack.isEmpty()) {
+                    assert this.player != null;
+                    this.player.drop(itemStack, true, false);
+                    list.set(i, ItemStack.EMPTY);
+                }
+            }
+        }
     }
 
     @Inject(method = "save", at = @At("TAIL"))

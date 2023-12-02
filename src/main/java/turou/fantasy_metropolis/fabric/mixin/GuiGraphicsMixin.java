@@ -19,7 +19,7 @@ public class GuiGraphicsMixin {
     private void renderTooltipInternal(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY, ClientTooltipPositioner tooltipPositioner, CallbackInfo ci) {
         if (TooltipRenderer.shouldRender()) {
             components.subList(0, 4).clear();
-            components.addAll(TooltipRenderer.getComponents());
+            components.addAll(0, TooltipRenderer.getComponents());
         }
     }
 }

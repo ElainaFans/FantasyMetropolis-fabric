@@ -37,7 +37,7 @@ public class EventHandler {
     public static void registerClientEvents() {
         ClientTickEvents.END_WORLD_TICK.register(world -> {
             float baseFrameTime = Minecraft.getInstance().getDeltaFrameTime();
-            float speedFactor = 0.2f;
+            float speedFactor = 2f;
             var result = AnimationWorker.increaseTimer(baseFrameTime * speedFactor);
             if (result >= 20) AnimationWorker.resetTimer();
         });

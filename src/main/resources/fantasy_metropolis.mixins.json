@@ -16,6 +16,7 @@
     "InventoryMenuMixin",
     "InventoryMixin",
     "LivingEntityMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "ServerPlayerMixin"
   ]
 }
