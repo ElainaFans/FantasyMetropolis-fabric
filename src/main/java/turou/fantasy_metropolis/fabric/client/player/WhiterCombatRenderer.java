@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
+import turou.fantasy_metropolis.fabric.state.ContainerState;
 
 public class WhiterCombatRenderer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     public WhiterCombatRenderer(PlayerRenderer playerRenderer) {
@@ -18,14 +19,13 @@ public class WhiterCombatRenderer extends RenderLayer<AbstractClientPlayer, Play
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, AbstractClientPlayer livingEntity, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (Minecraft.getInstance().player != null) {
-            var item = Minecraft.getInstance().player.getInventory().getItem(41);
-            if (item.getItem() instanceof ItemSwordWhiter) {
-                poseStack.pushPose();
-                poseStack.translate(0, 0.35, 0.25);
-                Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, livingEntity.level(), 0);
-                poseStack.popPose();
-            }
+        var container = ContainerState.getClientContainer(livingEntity.getUUID());
+        var item = container.getItem(0);
+        if (item.getItem() instanceof ItemSwordWhiter) {
+            poseStack.pushPose();
+            poseStack.translate(0, 0.35, 0.25);
+            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, livingEntity.level(), 0);
+            poseStack.popPose();
         }
     }
 }

@@ -1,6 +1,7 @@
 package turou.fantasy_metropolis.fabric;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import turou.fantasy_metropolis.fabric.client.AnimationWorker;
 import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
+import turou.fantasy_metropolis.fabric.state.ContainerState;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
 public class EventHandler {
@@ -31,6 +33,10 @@ public class EventHandler {
                 player.level().setBlock(pos, RegisterHandler.BEDROCK.defaultBlockState(), 3);
             }
             return InteractionResult.PASS;
+        });
+
+        ServerTickEvents.START_WORLD_TICK.register((world) -> {
+            ContainerState.get(world).refreshDirty(world);
         });
     }
 

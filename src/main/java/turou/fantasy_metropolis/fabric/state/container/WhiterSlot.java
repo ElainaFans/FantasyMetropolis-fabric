@@ -1,4 +1,4 @@
-package turou.fantasy_metropolis.fabric.client.container;
+package turou.fantasy_metropolis.fabric.state.container;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

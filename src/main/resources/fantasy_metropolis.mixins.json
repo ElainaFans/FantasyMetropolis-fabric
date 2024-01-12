@@ -14,9 +14,7 @@
   ],
   "mixins": [
     "InventoryMenuMixin",
-    "InventoryMixin",
     "LivingEntityMixin",
-    "PlayerMixin",
-    "ServerPlayerMixin"
+    "PlayerMixin"
   ]
 }

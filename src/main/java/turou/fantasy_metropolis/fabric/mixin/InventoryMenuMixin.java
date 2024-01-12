@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import turou.fantasy_metropolis.fabric.client.container.WhiterSlot;
+import turou.fantasy_metropolis.fabric.state.ContainerState;
+import turou.fantasy_metropolis.fabric.state.container.SimpleContainer;
+import turou.fantasy_metropolis.fabric.state.container.WhiterSlot;
 
 @Mixin(InventoryMenu.class)
 public abstract class InventoryMenuMixin extends AbstractContainerMenu {
@@ -19,6 +21,7 @@ public abstract class InventoryMenuMixin extends AbstractContainerMenu {
     }
     @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/world/entity/player/Inventory;ZLnet/minecraft/world/entity/player/Player;)V")
     private void init(Inventory playerInventory, boolean active, Player owner, CallbackInfo ci) {
-        this.addSlot(new WhiterSlot(playerInventory, 41, 77, 8)); // 41: 36 + 4 + 1
+        SimpleContainer container = ContainerState.getContainer(owner);
+        this.addSlot(new WhiterSlot(container, 0, 77, 8));
     }
 }
