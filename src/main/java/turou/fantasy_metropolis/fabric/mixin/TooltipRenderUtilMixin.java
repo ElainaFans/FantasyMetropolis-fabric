@@ -16,6 +16,7 @@ public class TooltipRenderUtilMixin {
         TooltipRenderer.setGuiGraphicsContext(guiGraphics);
         if (TooltipRenderer.shouldRender()) {
             TooltipRenderer.renderBackground(x, y, width, height);
+            TooltipRenderer.renderTitle(x, y, width);
             TooltipRenderer.renderCharacter(x, y);
             ci.cancel();
         }

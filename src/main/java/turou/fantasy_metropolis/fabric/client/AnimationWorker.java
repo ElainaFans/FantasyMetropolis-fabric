@@ -1,6 +1,8 @@
 package turou.fantasy_metropolis.fabric.client;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.ResourceLocation;
+import turou.fantasy_metropolis.fabric.FantasyMetropolis;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,5 +60,10 @@ public class AnimationWorker {
         }
 
         return string.toString();
+    }
+
+    public static ResourceLocation marqueeGif(int size) {
+        int numIndex = ((int) renderTimer) % size;
+        return new ResourceLocation(FantasyMetropolis.MODID, "textures/tooltip/title/" + (numIndex + 1) + ".png");
     }
 }

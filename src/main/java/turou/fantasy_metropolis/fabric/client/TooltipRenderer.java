@@ -48,7 +48,8 @@ public class TooltipRenderer {
         int range = itemStackContext.getOrCreateTag().getInt("range");
         List<Component> list = Lists.newArrayList();
 
-        list.add(Component.literal(AnimationWorker.marqueeTitle(I18n.get("tooltip.whiter_sword.title"))));
+        // list.add(Component.literal(AnimationWorker.marqueeTitle(I18n.get("tooltip.whiter_sword.title"))));
+        list.add(Component.literal("")); // keep enough space for gif title
         list.add(1, Component.literal(ChatFormatting.LIGHT_PURPLE + "+ "  + I18n.get("tooltip.skill.hint")));
         list.add(2, Component.literal(ChatFormatting.BLUE + "+ "  + I18n.get("tooltip.skill.range") + range));
         list.add(3, Component.literal(""));
@@ -63,6 +64,16 @@ public class TooltipRenderer {
         guiGraphicsContext.pose().translate(0, 0, 400);
         RenderSystem.enableBlend();
         innerBlit(getPath("character_left"), x - 68, y - 16, 60, 83);
+        RenderSystem.disableBlend();
+        guiGraphicsContext.pose().popPose();
+    }
+
+    public static void renderTitle(int x, int y, int width) {
+        guiGraphicsContext.pose().pushPose();
+        guiGraphicsContext.pose().translate(0, 0, 450);
+        RenderSystem.enableBlend();
+        var currentImage = AnimationWorker.marqueeGif(29);
+        innerBlit(currentImage, x - 24 + width / 2, y - 27, 46, 60);
         RenderSystem.disableBlend();
         guiGraphicsContext.pose().popPose();
     }
