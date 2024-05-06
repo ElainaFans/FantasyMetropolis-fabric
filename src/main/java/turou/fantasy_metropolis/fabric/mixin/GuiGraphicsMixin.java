@@ -18,7 +18,9 @@ public class GuiGraphicsMixin {
     @Inject(method = "renderTooltipInternal", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void renderTooltipInternal(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY, ClientTooltipPositioner tooltipPositioner, CallbackInfo ci) {
         if (TooltipRenderer.shouldRender()) {
-            components.subList(0, 4).clear();
+            int size = components.size();
+            int delSize = Math.min(size, 5);
+            components.subList(0, delSize).clear();
             components.addAll(0, TooltipRenderer.getComponents());
         }
     }

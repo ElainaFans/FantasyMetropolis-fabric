@@ -63,7 +63,7 @@ public class TooltipRenderer {
         guiGraphicsContext.pose().pushPose();
         guiGraphicsContext.pose().translate(0, 0, 400);
         RenderSystem.enableBlend();
-        innerBlit(getPath("character_left"), x - 68, y - 16, 60, 83);
+        innerBlit(getPath("character_left"), x - 68, y - 16, 58, 80);
         RenderSystem.disableBlend();
         guiGraphicsContext.pose().popPose();
     }
