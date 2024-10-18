@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import turou.fantasy_metropolis.fabric.NetworkHandler;
@@ -54,8 +55,9 @@ public class ContainerState extends SavedData {
         return clientContainers.get(uuid);
     }
 
-    public static ContainerState get(ServerLevel world) {
-        return world.getDataStorage().computeIfAbsent(ContainerState::fromNbt, ContainerState::new, NAME);
+    public static ContainerState get(ServerLevel world)     {
+        var factory = new SavedData.Factory<>(ContainerState::new, ContainerState::fromNbt, DataFixTypes.LEVEL);
+        return world.getDataStorage().computeIfAbsent(factory, NAME);
     }
 
     public static SimpleContainer getServerContainer(ServerLevel world, UUID uuid) {
