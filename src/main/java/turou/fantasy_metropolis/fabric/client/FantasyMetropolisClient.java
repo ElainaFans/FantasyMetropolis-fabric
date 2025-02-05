@@ -17,7 +17,9 @@ public class FantasyMetropolisClient implements ClientModInitializer {
     public static final HashMap<UUID, SimpleContainer> playerContainers = new HashMap<>();
     @Override
     public void onInitializeClient() {
-        SpecialModelLoaderEvents.LOAD_SCOPE.register(location -> FantasyMetropolis.MODID.equals(location.getNamespace()));
+        SpecialModelLoaderEvents.LOAD_SCOPE.register(() -> {
+            return (resourceManager, location) -> FantasyMetropolis.MODID.equals(location.getNamespace());
+        });
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if (entityRenderer instanceof PlayerRenderer playerRenderer) {
                 registrationHelper.register(new WhiterCombatRenderer(playerRenderer));

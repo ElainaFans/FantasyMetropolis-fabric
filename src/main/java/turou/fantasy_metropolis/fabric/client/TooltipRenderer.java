@@ -32,7 +32,7 @@ public class TooltipRenderer {
     }
 
     private static ResourceLocation getPath(String part) {
-        return new ResourceLocation(FantasyMetropolis.MODID, "textures/tooltip/" + part + ".png");
+        return ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "textures/tooltip/" + part + ".png");
     }
 
     private static ResourceLocation getBorderPath(String borderPart) {

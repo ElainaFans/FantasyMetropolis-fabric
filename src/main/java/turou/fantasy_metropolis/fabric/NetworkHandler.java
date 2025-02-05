@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class NetworkHandler {
 
-    public static final ResourceLocation SCROLL_SWORD_PACKET = new ResourceLocation(FantasyMetropolis.MODID, "scroll_sword");
-    public static final ResourceLocation CONTAINER_UPDATE_PACKET = new ResourceLocation(FantasyMetropolis.MODID, "container_update");
+    public static final ResourceLocation SCROLL_SWORD_PACKET = ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "scroll_sword");
+    public static final ResourceLocation CONTAINER_UPDATE_PACKET = ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "container_update");
 
 
     public static void registerPackets() {

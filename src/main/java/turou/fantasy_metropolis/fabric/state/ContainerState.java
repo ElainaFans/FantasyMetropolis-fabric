@@ -2,6 +2,7 @@ package turou.fantasy_metropolis.fabric.state;
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +23,7 @@ public class ContainerState extends SavedData {
     private static final String NAME = "fantasy_metropolis_container";
     private final HashMap<UUID, SimpleContainer> playerContainers = new HashMap<>();
 
-    public static ContainerState fromNbt(CompoundTag tag) {
+    public static ContainerState fromNbt(CompoundTag tag, HolderLookup.Provider registries) {
         ContainerState state = new ContainerState();
         CompoundTag containersTag = tag.getCompound("playerContainers");
         containersTag.getAllKeys().forEach(key -> {
@@ -31,16 +32,6 @@ public class ContainerState extends SavedData {
             state.playerContainers.put(UUID.fromString(key), container);
         });
         return state;
-    }
-
-    @Override
-    public @NotNull CompoundTag save(CompoundTag compoundTag) {
-        CompoundTag containersTag = new CompoundTag();
-        playerContainers.forEach((uuid, simpleContainer) -> {
-            containersTag.put(uuid.toString(), simpleContainer.serializeNBT());
-        });
-        compoundTag.put("playerContainers", containersTag);
-        return compoundTag;
     }
 
     public static SimpleContainer getContainer(Player player) {
@@ -90,5 +81,15 @@ public class ContainerState extends SavedData {
             }
         });
         if (reallyDirty.get()) this.setDirty();
+    }
+
+    @Override
+    public @NotNull CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider registries) {
+        CompoundTag containersTag = new CompoundTag();
+        playerContainers.forEach((uuid, simpleContainer) -> {
+            containersTag.put(uuid.toString(), simpleContainer.serializeNBT());
+        });
+        compoundTag.put("playerContainers", containersTag);
+        return compoundTag;
     }
 }
