@@ -13,7 +13,7 @@ public class RegisterHandler {
     public static final Block BEDROCK = new Block(BlockBehaviour.Properties.of().strength(1.0F, 3600000.0F));
 
     public static void registerItems() {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(FantasyMetropolis.MODID, "whiter_sword"), WHITER_SWORD);
-        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(FantasyMetropolis.MODID, "bedrock"), BEDROCK);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "whiter_sword"), WHITER_SWORD);
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "bedrock"), BEDROCK);
     }
 }

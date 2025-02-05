@@ -42,7 +42,7 @@ public class EventHandler {
 
     public static void registerClientEvents() {
         ClientTickEvents.END_WORLD_TICK.register(world -> {
-            float baseFrameTime = Minecraft.getInstance().getDeltaFrameTime();
+            float baseFrameTime = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
             float speedFactor = 2f;
             var result = AnimationWorker.increaseTimer(baseFrameTime * speedFactor);
             if (result >= 20) AnimationWorker.resetTimer();
@@ -67,7 +67,7 @@ public class EventHandler {
         var attacker = damageSource.getEntity();
         if (attacker instanceof Player playerAttacker) {
             if (PlayerUtil.hasSword(playerAttacker)) {
-                if (damageSource.isIndirect() || ((Player) attacker).getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSwordWhiter) {
+                if (!damageSource.isDirect() || ((Player) attacker).getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSwordWhiter) {
                     // Use hurt trigger to get real effect (use magic damage to prevent recursion).
                     receiver.hurt(receiver.level().damageSources().magic(), Float.MAX_VALUE);
                 }

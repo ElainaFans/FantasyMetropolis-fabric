@@ -2,7 +2,11 @@ package turou.fantasy_metropolis.fabric.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,17 +23,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import turou.fantasy_metropolis.fabric.util.DamageUtil;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
 public class ItemSwordWhiter extends SwordItem {
-    private static final Properties properties = new Properties().fireResistant();
+    private static final Properties properties = new Properties().fireResistant().attributes(SwordItem.createAttributes(new TierWhiter(), 0, 9999));
     private static final int RANGE_ATTACK = 5;
 
 
     public ItemSwordWhiter() {
-        super(new TierWhiter(), 0, 9999, properties);
+        super(new TierWhiter(), properties);
     }
 
     @Override
@@ -89,17 +94,6 @@ public class ItemSwordWhiter extends SwordItem {
         }
     }
 
-    @Override
-    public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pEquipmentSlot) {
-        // set attack speed
-        if (pEquipmentSlot.equals(EquipmentSlot.MAINHAND)) {
-            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-            builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", 9996, AttributeModifier.Operation.ADDITION));
-            return builder.build();
-        }
-        return ImmutableMultimap.of();
-    }
-
     private static class TierWhiter implements Tier {
         @Override
         public int getUses() {
@@ -117,8 +111,8 @@ public class ItemSwordWhiter extends SwordItem {
         }
 
         @Override
-        public int getLevel() {
-            return 0;
+        public @NotNull TagKey<Block> getIncorrectBlocksForDrops() {
+            return BlockTags.AIR;
         }
 
         @Override

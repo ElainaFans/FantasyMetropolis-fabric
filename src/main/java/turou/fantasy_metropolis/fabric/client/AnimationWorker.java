@@ -64,6 +64,6 @@ public class AnimationWorker {
 
     public static ResourceLocation marqueeGif(int size) {
         int numIndex = ((int) renderTimer) % size;
-        return new ResourceLocation(FantasyMetropolis.MODID, "textures/tooltip/title/" + (numIndex + 1) + ".png");
+        return ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "textures/tooltip/title/" + (numIndex + 1) + ".png");
     }
 }
