@@ -1,5 +1,6 @@
 package turou.fantasy_metropolis.fabric.item;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -15,13 +16,14 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import turou.fantasy_metropolis.fabric.RegisterHandler;
 import turou.fantasy_metropolis.fabric.util.DamageUtil;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
 public class ItemSwordWhiter extends SwordItem {
-    private static final Properties properties = new Properties().fireResistant().attributes(SwordItem.createAttributes(new TierWhiter(), 0, 9999));
+    private static final Properties properties = new Properties().fireResistant().attributes(SwordItem.createAttributes(new TierWhiter(), 0, 9996));
     private static final int RANGE_ATTACK = 5;
 
 
@@ -71,6 +73,16 @@ public class ItemSwordWhiter extends SwordItem {
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
         }
         return InteractionResultHolder.pass(player.getItemInHand(hand));
+    }
+
+    @Override
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        return true;
+    }
+
+    @Override
+    public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        // prohibit damaging the tools
     }
 
     @Override
