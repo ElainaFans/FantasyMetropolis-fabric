@@ -1,19 +1,17 @@
 package turou.fantasy_metropolis.fabric.state;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
-import turou.fantasy_metropolis.fabric.NetworkHandler;
 import turou.fantasy_metropolis.fabric.client.FantasyMetropolisClient;
 import turou.fantasy_metropolis.fabric.state.container.SimpleContainer;
 import net.minecraft.world.level.saveddata.SavedData;
+import turou.fantasy_metropolis.fabric.state.payload.ContainerUpdatePayload;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -63,10 +61,7 @@ public class ContainerState extends SavedData {
     public void notifyPlayers(UUID source, SimpleContainer container, ServerLevel world) {
         world.getServer().execute(() -> {
             world.players().forEach((player) -> {
-                FriendlyByteBuf byteBuf = PacketByteBufs.create();
-                byteBuf.writeUUID(source);
-                byteBuf.writeNbt(container.serializeNBT());
-                ServerPlayNetworking.send(player, NetworkHandler.CONTAINER_UPDATE_PACKET, byteBuf);
+                ServerPlayNetworking.send(player, new ContainerUpdatePayload(source, container.serializeNBT()));
             });
         });
     }
