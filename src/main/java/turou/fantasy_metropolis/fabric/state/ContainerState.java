@@ -26,7 +26,7 @@ public class ContainerState extends SavedData {
         CompoundTag containersTag = tag.getCompound("playerContainers");
         containersTag.getAllKeys().forEach(key -> {
             SimpleContainer container = new SimpleContainer(1);
-            container.deserializeNBT(containersTag.getCompound(key));
+            container.deserializeNBT(containersTag.getCompound(key), registries);
             state.playerContainers.put(UUID.fromString(key), container);
         });
         return state;
@@ -61,7 +61,7 @@ public class ContainerState extends SavedData {
     public void notifyPlayers(UUID source, SimpleContainer container, ServerLevel world) {
         world.getServer().execute(() -> {
             world.players().forEach((player) -> {
-                ServerPlayNetworking.send(player, new ContainerUpdatePayload(source, container.serializeNBT()));
+                ServerPlayNetworking.send(player, new ContainerUpdatePayload(source, container.serializeNBT(world.registryAccess())));
             });
         });
     }
@@ -82,7 +82,7 @@ public class ContainerState extends SavedData {
     public @NotNull CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider registries) {
         CompoundTag containersTag = new CompoundTag();
         playerContainers.forEach((uuid, simpleContainer) -> {
-            containersTag.put(uuid.toString(), simpleContainer.serializeNBT());
+            containersTag.put(uuid.toString(), simpleContainer.serializeNBT(registries));
         });
         compoundTag.put("playerContainers", containersTag);
         return compoundTag;

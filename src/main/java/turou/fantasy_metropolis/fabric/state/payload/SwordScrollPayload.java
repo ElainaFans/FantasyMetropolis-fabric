@@ -7,7 +7,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
-import turou.fantasy_metropolis.fabric.NetworkHandler;
 
 public record SwordScrollPayload(int scroll) implements CustomPacketPayload {
     public static final ResourceLocation SCROLL_SWORD_PACKET = ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "scroll_sword");
