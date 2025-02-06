@@ -1,5 +1,5 @@
 {
-  "loader": "forge:obj",
+  "parent": "special-model-loader:builtin/obj",
   "flip_v": true,
   "model": "fantasy_metropolis:models/item/whiter_sword.obj",
   "display": {
