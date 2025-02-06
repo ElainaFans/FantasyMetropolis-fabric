@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
+import turou.fantasy_metropolis.fabric.RegisterHandler;
 import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class TooltipRenderer {
     }
 
     public static List<ClientTooltipComponent> getComponents() {
-        int range = itemStackContext.getOrCreateTag().getInt("range");
+        int range = itemStackContext.getOrDefault(RegisterHandler.SWORD_RANGE, 0);
         List<Component> list = Lists.newArrayList();
 
         // list.add(Component.literal(AnimationWorker.marqueeTitle(I18n.get("tooltip.whiter_sword.title"))));

@@ -1,5 +1,6 @@
 package turou.fantasy_metropolis.fabric.state.container;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -93,13 +94,13 @@ public class SimpleContainer implements Container {
         setChanged();
     }
 
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
         for (int i = 0; i < items.size(); i++) {
             if (!items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                items.get(i).save(itemTag);
+                itemTag.put("Stack", items.get(i).save(provider));
                 nbtTagList.add(itemTag);
             }
         }
@@ -110,16 +111,17 @@ public class SimpleContainer implements Container {
         return nbt;
     }
 
-    public void deserializeNBT(final CompoundTag nbt) {
+    public void deserializeNBT(final CompoundTag nbt, HolderLookup.Provider provider) {
         this.dirty = nbt.getBoolean("Dirty");
         setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : items.size());
         ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
         for (int i = 0; i < tagList.size(); i++) {
             CompoundTag itemTags = tagList.getCompound(i);
             int slot = itemTags.getInt("Slot");
+            Tag tag = itemTags.get("Stack");
 
             if (slot >= 0 && slot < items.size()) {
-                items.set(slot, ItemStack.of(itemTags));
+                ItemStack.parse(provider, tag).ifPresent((stack) -> items.set(slot, stack));
             }
         }
         setChanged();
