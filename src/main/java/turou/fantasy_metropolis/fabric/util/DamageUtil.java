@@ -87,7 +87,7 @@ public class DamageUtil {
         entity.noPhysics = true;
     }
 
-    public static void hurtRange(int range, Player player, Level level) {
+    public static void hurtRange(int range, Player player, Level level, boolean lightning) {
         level.getEntitiesOfClass(Entity.class,new AABB(player.getOnPos()).inflate(range)).forEach(e -> {
             if(e != player){
                 if(e instanceof LivingEntity livingEntity){
@@ -95,21 +95,17 @@ public class DamageUtil {
                     livingEntity.setHealth(0.0f);
                     DamageUtil.killLivingEntity(livingEntity);
                     livingEntity.setHealth(0.0f);
-                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
-                    lightningBolt.setVisualOnly(true);
-                    lightningBolt.setPos(livingEntity.getPosition(0));
-                    level.addFreshEntity(lightningBolt);
-                }
-                else{
+                } else {
                     e.hurt(e.damageSources().sonicBoom(e),Float.MAX_VALUE);
                     DamageUtil.killWildcardEntity(e);
+                }
+                if (lightning) {
                     LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
-                    lightningBolt.setPos(e.getPosition(0));
                     lightningBolt.setVisualOnly(true);
+                    lightningBolt.setPos(e.getPosition(0));
                     level.addFreshEntity(lightningBolt);
                 }
             }
-
         });
     }
 }

@@ -50,6 +50,9 @@ public class ItemSwordWhiter extends SwordItem {
         boolean returnValue = super.hurtEnemy(stack, target, attacker);
         target.setHealth(0.0f);
         DamageUtil.killLivingEntity(target);
+        if (attacker instanceof Player player) {
+            DamageUtil.hurtRange(RANGE_ATTACK, player, attacker.level(), false);
+        }
         return returnValue;
     }
 
@@ -59,7 +62,7 @@ public class ItemSwordWhiter extends SwordItem {
             if (!level.isClientSide) {
                 player.sendSystemMessage(Component.translatable("whiter_sword.kill_range"));
                 int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrDefault(RegisterHandler.SWORD_RANGE, 0);
-                DamageUtil.hurtRange(range, player, level);
+                DamageUtil.hurtRange(range, player, level, true);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
         }
