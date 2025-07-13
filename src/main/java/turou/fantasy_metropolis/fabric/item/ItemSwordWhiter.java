@@ -61,7 +61,7 @@ public class ItemSwordWhiter extends SwordItem {
         if (hand.equals(InteractionHand.MAIN_HAND) && player.isShiftKeyDown()) {
             if (!level.isClientSide) {
                 player.sendSystemMessage(Component.translatable("whiter_sword.kill_range"));
-                int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrDefault(RegisterHandler.SWORD_RANGE, 0);
+                int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrCreateTag().getInt("range");
                 DamageUtil.hurtRange(range, player, level, true);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
