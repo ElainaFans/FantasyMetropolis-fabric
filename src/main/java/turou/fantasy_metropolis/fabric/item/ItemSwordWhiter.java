@@ -45,21 +45,11 @@ public class ItemSwordWhiter extends SwordItem {
     }
 
     @Override
-    public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity livingEntity, InteractionHand usedHand) {
-        if (!player.level().isClientSide) {
-            // Creative need to be handled here because they don't trigger attack event
-            if (livingEntity instanceof Player targetPlayer) {
-                // Creative who has the sword will not be set dead
-                if (targetPlayer.isCreative() && !PlayerUtil.hasSword(targetPlayer)) {
-                    DamageUtil.punishPlayer(targetPlayer);
-                    targetPlayer.setHealth(0f);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-            DamageUtil.killEntityLiving(livingEntity);
-            DamageUtil.hurtRange(RANGE_ATTACK, player);
-        }
-        return InteractionResult.SUCCESS;
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        boolean returnValue = super.hurtEnemy(stack, target, attacker);
+        target.setHealth(0.0f);
+        DamageUtil.killLivingEntity(target);
+        return returnValue;
     }
 
     @Override
@@ -68,7 +58,7 @@ public class ItemSwordWhiter extends SwordItem {
             if (!level.isClientSide) {
                 player.sendSystemMessage(Component.translatable("whiter_sword.kill_range"));
                 int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrDefault(RegisterHandler.SWORD_RANGE, 0);
-                DamageUtil.hurtRange(range, player);
+                DamageUtil.hurtRange(range, player, level);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
         }
@@ -99,17 +89,17 @@ public class ItemSwordWhiter extends SwordItem {
     private static class TierWhiter implements Tier {
         @Override
         public int getUses() {
-            return 0;
+            return Integer.MAX_VALUE;
         }
 
         @Override
         public float getSpeed() {
-            return 0;
+            return (float) Double.POSITIVE_INFINITY;
         }
 
         @Override
         public float getAttackDamageBonus() {
-            return 0;
+            return (float) Double.POSITIVE_INFINITY;
         }
 
         @Override
@@ -119,12 +109,12 @@ public class ItemSwordWhiter extends SwordItem {
 
         @Override
         public int getEnchantmentValue() {
-            return 0;
+            return Integer.MAX_VALUE;
         }
 
         @Override
         public @NotNull Ingredient getRepairIngredient() {
-            return Ingredient.EMPTY;
+            return Ingredient.of();
         }
     }
 }

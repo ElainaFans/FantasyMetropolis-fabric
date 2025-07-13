@@ -1,46 +1,115 @@
 package turou.fantasy_metropolis.fabric.util;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
+import turou.fantasy_metropolis.fabric.mixin.ILivingEntityMixin;
 
 public class DamageUtil {
-    private static AABB growAABB(AABB aabb, int range) {
-        return aabb.expandTowards(range, range, range).expandTowards(-range, -range, -range);
-    }
-
     public static void punishPlayer(Player player) {
-        player.getInventory().dropAll();
-        player.getEnderChestInventory().clearContent();
-    }
-
-    // black magic included for anti entity and player punish
-    public static void killEntityLiving(LivingEntity entity) {
-        var level = entity.level();
-        if (!(level.isClientSide || entity.isDeadOrDying() || entity.getHealth() == 0.0F)) {
-            var damageSource = level.damageSources().magic();
-            entity.getCombatTracker().recordDamage(damageSource, Float.MAX_VALUE);
-            entity.setHealth(0.0F);
-            if (entity instanceof Player player) {
-                punishPlayer(player);
-            }
+        if (!PlayerUtil.hasSword(player)) {
+            player.getInventory().dropAll();
+            player.getEnderChestInventory().clearContent();
         }
     }
 
-    public static void hurtRange(int range, Player player) {
-        AABB rangeAABB = growAABB(new AABB(player.blockPosition()), range);
-        List<Entity> entities = player.level().getEntitiesOfClass(Entity.class, rangeAABB);
-        for (Entity entity : entities) {
-            if (entity.getUUID().equals(player.getUUID())) continue; // You shouldn't attack yourself
-            if (entity instanceof LivingEntity) {
-                killEntityLiving((LivingEntity) entity);
-            } else {
-                // If entity can't be damaged, we remove it(NPCMod, wither, items, item frame...)
-                entity.remove(Entity.RemovalReason.KILLED);
+    public static void killLivingEntity(LivingEntity entity) {
+        if(!entity.isAlive()) return;
+        if (entity instanceof Player player) DamageUtil.punishPlayer(player);
+
+        //make it no invulnerable
+        entity.setInvulnerable(false);
+        entity.setRemainingFireTicks(Integer.MAX_VALUE);
+        entity.setSharedFlagOnFire(true);
+
+        if(!entity.isAlive()) return;
+
+        entity.removeVehicle();
+        entity.removeAllEffects();
+
+        if(!entity.isAlive()) return;
+
+        //remove it
+        entity.remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.CHANGED_DIMENSION);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.DISCARDED);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.KILLED);
+        if(!entity.isAlive() && !entity.isRemoved()) return;
+
+        //kill it
+        entity.kill();
+        if(!entity.isAlive()) return;
+        entity.die(entity.damageSources().sonicBoom(entity));
+        if(!entity.isAlive()) return;
+        ((ILivingEntityMixin) entity).setDead(true);
+        if(!entity.isAlive()) return;
+        entity.deathTime = 20;
+        entity.hurtTime = 20;
+
+        ((ILivingEntityMixin) entity).setDead(true);
+        entity.noPhysics = true;
+    }
+
+    public static void killWildcardEntity(Entity entity) {
+        if(!entity.isAlive()) return;
+
+        //make it no invulnerable
+        entity.setInvulnerable(false);
+        entity.setRemainingFireTicks(Integer.MAX_VALUE);
+        entity.setSharedFlagOnFire(true);
+        entity.removeVehicle();
+        if(!entity.isAlive()) return;
+
+        //remove it
+        entity.remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.CHANGED_DIMENSION);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.KILLED);
+        if(!entity.isAlive()) return;
+        entity.remove(Entity.RemovalReason.DISCARDED);
+        if(!entity.isAlive() && !entity.isRemoved()) return;
+
+        entity.kill();
+        if(!entity.isAlive()) return;
+
+        entity.noPhysics = true;
+    }
+
+    public static void hurtRange(int range, Player player, Level level) {
+        level.getEntitiesOfClass(Entity.class,new AABB(player.getOnPos()).inflate(range)).forEach(e -> {
+            if(e != player){
+                if(e instanceof LivingEntity livingEntity){
+                    e.hurt(e.damageSources().sonicBoom(e),Float.MAX_VALUE);
+                    livingEntity.setHealth(0.0f);
+                    DamageUtil.killLivingEntity(livingEntity);
+                    livingEntity.setHealth(0.0f);
+                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+                    lightningBolt.setVisualOnly(true);
+                    lightningBolt.setPos(livingEntity.getPosition(0));
+                    level.addFreshEntity(lightningBolt);
+                }
+                else{
+                    e.hurt(e.damageSources().sonicBoom(e),Float.MAX_VALUE);
+                    DamageUtil.killWildcardEntity(e);
+                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+                    lightningBolt.setPos(e.getPosition(0));
+                    lightningBolt.setVisualOnly(true);
+                    level.addFreshEntity(lightningBolt);
+                }
             }
-        }
+
+        });
     }
 }
