@@ -2,6 +2,8 @@ package turou.fantasy_metropolis.fabric.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -32,10 +34,10 @@ public class ItemSwordWhiter extends Item {
 
     private static final int RANGE_ATTACK = 5;
 
-    public ItemSwordWhiter() {
+    public ItemSwordWhiter(ResourceKey<Item> key) {
         super(new Properties()
                 .sword(WHITER_MATERIAL, (int) Float.POSITIVE_INFINITY, 9996)
-                .fireResistant());
+                .fireResistant().setId(key));
     }
 
     @Override
