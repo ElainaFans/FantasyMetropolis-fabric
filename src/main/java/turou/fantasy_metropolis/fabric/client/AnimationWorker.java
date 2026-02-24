@@ -1,7 +1,7 @@
 package turou.fantasy_metropolis.fabric.client;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
 
 import java.util.Arrays;
@@ -17,8 +17,7 @@ public class AnimationWorker {
             ChatFormatting.AQUA,
             ChatFormatting.BLUE,
             ChatFormatting.DARK_AQUA,
-            ChatFormatting.DARK_BLUE
-    );
+            ChatFormatting.DARK_BLUE);
 
     private static final List<ChatFormatting> colorCodesDamage = Arrays.asList(
             ChatFormatting.RED,
@@ -27,8 +26,7 @@ public class AnimationWorker {
             ChatFormatting.GREEN,
             ChatFormatting.BLUE,
             ChatFormatting.AQUA,
-            ChatFormatting.LIGHT_PURPLE
-    );
+            ChatFormatting.LIGHT_PURPLE);
 
     public static float increaseTimer(float value) {
         return renderTimer += value;
@@ -55,15 +53,16 @@ public class AnimationWorker {
         for (int i = 0; i < charArray.length; i++) {
             char currentChar = targetString.charAt(i);
 
-            String colorCode = "" + colorCodes.get((i + colorCodeIndex) % colorCodes.size()) + (bold ? ChatFormatting.BOLD : "");
+            String colorCode = "" + colorCodes.get((i + colorCodeIndex) % colorCodes.size())
+                    + (bold ? ChatFormatting.BOLD : "");
             string.append(colorCode).append(currentChar);
         }
 
         return string.toString();
     }
 
-    public static ResourceLocation marqueeGif(int size) {
+    public static Identifier marqueeGif(int size) {
         int numIndex = ((int) renderTimer) % size;
-        return ResourceLocation.fromNamespaceAndPath(FantasyMetropolis.MODID, "textures/tooltip/title/" + (numIndex + 1) + ".png");
+        return Identifier.fromNamespaceAndPath(FantasyMetropolis.MODID, "tooltip/title/" + (numIndex + 1));
     }
 }

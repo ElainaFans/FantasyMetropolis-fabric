@@ -1,5 +1,6 @@
 package turou.fantasy_metropolis.fabric.mixin;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,8 +13,8 @@ import turou.fantasy_metropolis.fabric.EventHandler;
 
 @Mixin(Player.class)
 public class PlayerMixin {
-    @Inject(method = "hurt", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "hurtServer", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+    private void hurtServer(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         Player player = (Player) (Object) this;
         EventHandler.onPlayerHurt(player, source, amount, cir);
     }
@@ -21,5 +22,6 @@ public class PlayerMixin {
     @Inject(method = "hasCorrectToolForDrops", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private void harvestCheck(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         Player player = (Player) (Object) this;
-        EventHandler.onHarvestCheck(player, state, cir);}
+        EventHandler.onHarvestCheck(player, state, cir);
+    }
 }

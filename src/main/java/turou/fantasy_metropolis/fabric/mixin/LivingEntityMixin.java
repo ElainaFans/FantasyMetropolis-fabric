@@ -1,5 +1,6 @@
 package turou.fantasy_metropolis.fabric.mixin;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,16 +26,18 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow
     public abstract float getHealth();
 
-    @Shadow public abstract void setHealth(float p_21154_);
+    @Shadow
+    public abstract void setHealth(float p_21154_);
 
     @Inject(method = "actuallyHurt", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onLivingEntityHurt(DamageSource damageSource, float damageAmount, CallbackInfo ci) {
+    private void onLivingEntityHurt(ServerLevel serverLevel, DamageSource damageSource, float damageAmount,
+            CallbackInfo ci) {
         LivingEntity livingEntity = (LivingEntity) (Object) this;
         EventHandler.onLivingEntityHurt(livingEntity, damageSource, damageAmount, ci);
     }
 
-
-    @Shadow @Final
+    @Shadow
+    @Final
     private static EntityDataAccessor<Float> DATA_HEALTH_ID;
 
     @Inject(method = "isAlive", at = @At("HEAD"), cancellable = true)

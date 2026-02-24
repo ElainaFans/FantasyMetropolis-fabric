@@ -4,6 +4,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,8 +16,9 @@ import java.util.List;
 
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin {
-    @Inject(method = "renderTooltipInternal", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void renderTooltipInternal(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY, ClientTooltipPositioner tooltipPositioner, CallbackInfo ci) {
+    @Inject(method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;)V", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void renderTooltip(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY,
+            ClientTooltipPositioner tooltipPositioner, Identifier tooltipStyle, CallbackInfo ci) {
         if (TooltipRenderer.shouldRender()) {
             int size = components.size();
             int delSize = Math.min(size, 5);
@@ -25,8 +27,9 @@ public class GuiGraphicsMixin {
         }
     }
 
-    @Inject(method = "renderTooltipInternal", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void renderTooltipInternalEnd(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY, ClientTooltipPositioner tooltipPositioner, CallbackInfo ci) {
+    @Inject(method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;)V", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void renderTooltipEnd(Font font, List<ClientTooltipComponent> components, int mouseX, int mouseY,
+            ClientTooltipPositioner tooltipPositioner, Identifier tooltipStyle, CallbackInfo ci) {
         TooltipRenderer.setItemStackContext(null); // we clear context when render tooltip is end.
     }
 }

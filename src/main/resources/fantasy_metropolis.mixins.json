@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "turou.fantasy_metropolis.fabric.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "injectors": {
     "defaultRequire": 1
   },

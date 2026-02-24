@@ -7,8 +7,9 @@ import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
 
 public class PlayerUtil {
     public static boolean hasSword(Entity entity) {
-        if (!(entity instanceof Player player)) return false;
-        for(ItemStack itemStack : player.getInventory().items) {
+        if (!(entity instanceof Player player))
+            return false;
+        for (ItemStack itemStack : player.getInventory().getNonEquipmentItems()) {
             if (!itemStack.isEmpty() && itemStack.getItem() instanceof ItemSwordWhiter) {
                 return true;
             }

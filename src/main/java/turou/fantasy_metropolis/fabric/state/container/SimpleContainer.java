@@ -1,20 +1,39 @@
 package turou.fantasy_metropolis.fabric.state.container;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimpleContainer implements Container {
-    private int size;
-    private boolean dirty;
-    private NonNullList<ItemStack> items;
+    int size;
+    boolean dirty;
+    NonNullList<ItemStack> items;
+
+    public static final Codec<SimpleContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.INT.fieldOf("Size").forGetter(c -> c.size),
+            ItemStack.OPTIONAL_CODEC.listOf().fieldOf("Items").forGetter(c -> List.copyOf(c.items)))
+            .apply(instance, (size, itemList) -> {
+                SimpleContainer c = new SimpleContainer(size);
+                c.dirty = false;
+                for (int i = 0; i < Math.min(itemList.size(), size); i++) {
+                    c.items.set(i, itemList.get(i));
+                }
+                return c;
+            }));
 
     public SimpleContainer(int size) {
         dirty = true;
@@ -96,11 +115,13 @@ public class SimpleContainer implements Container {
 
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         ListTag nbtTagList = new ListTag();
+        var registryOps = RegistryOps.create(NbtOps.INSTANCE, provider);
         for (int i = 0; i < items.size(); i++) {
             if (!items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                itemTag.put("Stack", items.get(i).save(provider));
+                ItemStack.OPTIONAL_CODEC.encodeStart(registryOps, items.get(i))
+                        .result().ifPresent(tag -> itemTag.put("Stack", tag));
                 nbtTagList.add(itemTag);
             }
         }
@@ -112,16 +133,16 @@ public class SimpleContainer implements Container {
     }
 
     public void deserializeNBT(final CompoundTag nbt, HolderLookup.Provider provider) {
-        this.dirty = nbt.getBoolean("Dirty");
-        setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : items.size());
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
+        this.dirty = nbt.getBooleanOr("Dirty", false);
+        setSize(nbt.getIntOr("Size", items.size()));
+        ListTag tagList = nbt.getListOrEmpty("Items");
+        var registryOps = RegistryOps.create(NbtOps.INSTANCE, provider);
         for (int i = 0; i < tagList.size(); i++) {
-            CompoundTag itemTags = tagList.getCompound(i);
-            int slot = itemTags.getInt("Slot");
+            CompoundTag itemTags = tagList.getCompoundOrEmpty(i);
+            int slot = itemTags.getIntOr("Slot", -1);
             Tag tag = itemTags.get("Stack");
-
-            if (slot >= 0 && slot < items.size()) {
-                ItemStack.parse(provider, tag).ifPresent((stack) -> items.set(slot, stack));
+            if (slot >= 0 && slot < items.size() && tag != null) {
+                ItemStack.OPTIONAL_CODEC.parse(registryOps, tag).result().ifPresent(stack -> items.set(slot, stack));
             }
         }
         setChanged();
