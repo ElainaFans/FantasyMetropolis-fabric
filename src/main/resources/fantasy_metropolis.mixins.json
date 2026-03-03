@@ -15,6 +15,7 @@
   "mixins": [
     "InventoryMenuMixin",
     "LivingEntityMixin",
+    "ItemStackMixin",
     "PlayerMixin"
   ]
 }
