@@ -16,8 +16,8 @@ import java.util.UUID;
 
 public class NetworkHandler {
     public static void registerPackets() {
-        PayloadTypeRegistry.playC2S().register(SwordScrollPayload.TYPE, SwordScrollPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ContainerUpdatePayload.TYPE, ContainerUpdatePayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(SwordScrollPayload.TYPE, SwordScrollPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ContainerUpdatePayload.TYPE, ContainerUpdatePayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(SwordScrollPayload.TYPE, (payload, context) -> {
             int scroll = payload.scroll();
             var player = context.player();
@@ -38,7 +38,8 @@ public class NetworkHandler {
             SimpleContainer simpleContainer = new SimpleContainer(1);
             simpleContainer.deserializeNBT(Objects.requireNonNull(payload.tag()), context.player().registryAccess());
             context.client().execute(() -> {
-                FantasyMetropolisClient.playerContainers.merge(playerUUID, simpleContainer, (oldValue, newValue) -> newValue);
+                FantasyMetropolisClient.playerContainers.merge(playerUUID, simpleContainer,
+                        (oldValue, newValue) -> newValue);
             });
         });
     }

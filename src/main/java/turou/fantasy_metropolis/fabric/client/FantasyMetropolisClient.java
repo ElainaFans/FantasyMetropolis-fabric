@@ -2,7 +2,7 @@ package turou.fantasy_metropolis.fabric.client;
 
 import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import turou.fantasy_metropolis.fabric.EventHandler;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
@@ -18,7 +18,7 @@ public class FantasyMetropolisClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LivingEntityFeatureRendererRegistrationCallback.EVENT
+        LivingEntityRenderLayerRegistrationCallback.EVENT
                 .register((entityType, entityRenderer, registrationHelper, context) -> {
                     if (entityRenderer instanceof AvatarRenderer<?> avatarRenderer) {
                         registrationHelper.register(new WhiterCombatRenderer(avatarRenderer));

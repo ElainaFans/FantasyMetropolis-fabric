@@ -36,13 +36,13 @@ public class EventHandler {
             return InteractionResult.PASS;
         });
 
-        ServerTickEvents.START_WORLD_TICK.register((world) -> {
+        ServerTickEvents.START_LEVEL_TICK.register((world) -> {
             ContainerState.get(world).refreshDirty(world);
         });
     }
 
     public static void registerClientEvents() {
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(world -> {
             float baseFrameTime = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
             float speedFactor = 2f;
             var result = AnimationWorker.increaseTimer(baseFrameTime * speedFactor);
