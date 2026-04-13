@@ -1,5 +1,7 @@
 package turou.fantasy_metropolis.fabric.util;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -9,8 +11,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import turou.fantasy_metropolis.fabric.mixin.ILivingEntityMixin;
+import turou.fantasy_metropolis.fabric.state.payload.SwordExecutionEffectPayload;
 
 public class DamageUtil {
+    private static final int EXECUTION_EFFECT_DURATION = 50;
+
     public static void punishPlayer(Player player) {
         if (!PlayerUtil.hasSword(player)) {
             player.getInventory().dropAll();
@@ -113,6 +118,15 @@ public class DamageUtil {
     }
 
     public static void hurtRange(int range, Player player, Level level, boolean lightning) {
+        if (lightning && level instanceof ServerLevel serverLevel) {
+            var effectPayload = new SwordExecutionEffectPayload(player.blockPosition(), range, EXECUTION_EFFECT_DURATION);
+            PlayerLookup.around(serverLevel, player.position(), 128.0).forEach(watcher -> {
+                ServerPlayNetworking.send(watcher, effectPayload);
+            });
+            if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                ServerPlayNetworking.send(serverPlayer, effectPayload);
+            }
+        }
         level.getEntitiesOfClass(Entity.class, new AABB(player.getOnPos()).inflate(range)).forEach(e -> {
             if (e != player) {
                 if (e instanceof LivingEntity livingEntity) {
@@ -124,13 +138,13 @@ public class DamageUtil {
                     e.hurt(e.damageSources().sonicBoom(e), Float.MAX_VALUE);
                     DamageUtil.killWildcardEntity(e);
                 }
-                if (lightning) {
-                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
-                    lightningBolt.setVisualOnly(true);
-                    lightningBolt.setPos(e.getPosition(0));
-                    level.addFreshEntity(lightningBolt);
-                }
             }
         });
+        if (lightning) {
+            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+            lightningBolt.setVisualOnly(true);
+            lightningBolt.setPos(player.position());
+            level.addFreshEntity(lightningBolt);
+        }
     }
 }

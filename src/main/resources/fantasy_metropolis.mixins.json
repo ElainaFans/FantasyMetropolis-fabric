@@ -10,6 +10,9 @@
     "CreativeModeInventoryScreenMixin",
     "GuiGraphicsMixin",
     "MouseHandlerMixin",
+    "PostChainAccessor",
+    "PostPassAccessor",
+    "SwordExecutionGameRendererMixin",
     "TooltipRenderUtilMixin"
   ],
   "mixins": [

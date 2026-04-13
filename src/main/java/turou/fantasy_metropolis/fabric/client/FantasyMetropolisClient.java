@@ -2,7 +2,9 @@ package turou.fantasy_metropolis.fabric.client;
 
 import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import turou.fantasy_metropolis.fabric.EventHandler;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
@@ -29,5 +31,7 @@ public class FantasyMetropolisClient implements ClientModInitializer {
         });
         EventHandler.registerClientEvents();
         NetworkHandler.registerClientPackets();
+        ClientTickEvents.END_CLIENT_TICK.register(SwordExecutionEffectManager.INSTANCE);
+        WorldRenderEvents.END_MAIN.register(SwordExecutionEffectRenderer::render);
     }
 }

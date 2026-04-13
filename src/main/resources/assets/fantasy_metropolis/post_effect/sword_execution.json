@@ -1,0 +1,57 @@
+{
+  "passes": [
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "fantasy_metropolis:post/sword_execution",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main",
+          "bilinear": true
+        },
+        {
+          "sampler_name": "DepthSampler",
+          "target": "minecraft:main",
+          "use_depth_buffer": true
+        }
+      ],
+      "uniforms": {
+        "TransformConfig": [
+          {
+            "name": "InverseTransformMatrix",
+            "type": "matrix4x4",
+            "value": [
+              1.0, 0.0, 0.0, 0.0,
+              0.0, 1.0, 0.0, 0.0,
+              0.0, 0.0, 1.0, 0.0,
+              0.0, 0.0, 0.0, 1.0
+            ]
+          }
+        ],
+        "StrikeConfig": [
+          {
+            "name": "CameraPosition",
+            "type": "vec3",
+            "value": [0.0, 0.0, 0.0]
+          },
+          {
+            "name": "Time",
+            "type": "float",
+            "value": 0.0
+          },
+          {
+            "name": "BlockPosition",
+            "type": "vec3",
+            "value": [0.0, 0.0, 0.0]
+          },
+          {
+            "name": "Padding",
+            "type": "float",
+            "value": 0.0
+          }
+        ]
+      },
+      "output": "minecraft:main"
+    }
+  ]
+}

@@ -6,9 +6,11 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import turou.fantasy_metropolis.fabric.client.FantasyMetropolisClient;
+import turou.fantasy_metropolis.fabric.client.SwordExecutionEffectManager;
 import turou.fantasy_metropolis.fabric.item.ItemSwordWhiter;
 import turou.fantasy_metropolis.fabric.state.container.SimpleContainer;
 import turou.fantasy_metropolis.fabric.state.payload.ContainerUpdatePayload;
+import turou.fantasy_metropolis.fabric.state.payload.SwordExecutionEffectPayload;
 import turou.fantasy_metropolis.fabric.state.payload.SwordScrollPayload;
 
 import java.util.Objects;
@@ -18,6 +20,7 @@ public class NetworkHandler {
     public static void registerPackets() {
         PayloadTypeRegistry.playC2S().register(SwordScrollPayload.TYPE, SwordScrollPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ContainerUpdatePayload.TYPE, ContainerUpdatePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(SwordExecutionEffectPayload.TYPE, SwordExecutionEffectPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(SwordScrollPayload.TYPE, (payload, context) -> {
             int scroll = payload.scroll();
             var player = context.player();
@@ -37,9 +40,12 @@ public class NetworkHandler {
             UUID playerUUID = payload.uuid();
             SimpleContainer simpleContainer = new SimpleContainer(1);
             simpleContainer.deserializeNBT(Objects.requireNonNull(payload.tag()), context.player().registryAccess());
-            context.client().execute(() -> {
-                FantasyMetropolisClient.playerContainers.merge(playerUUID, simpleContainer, (oldValue, newValue) -> newValue);
-            });
+            context.client().execute(() -> FantasyMetropolisClient.playerContainers
+                    .merge(playerUUID, simpleContainer, (oldValue, newValue) -> newValue));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(SwordExecutionEffectPayload.TYPE, (payload, context) -> {
+            context.client().execute(
+                    () -> SwordExecutionEffectManager.INSTANCE.trigger(payload.center(), payload.range(), payload.durationTicks()));
         });
     }
 }
