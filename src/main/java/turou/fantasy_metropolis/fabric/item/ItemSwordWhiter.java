@@ -1,5 +1,6 @@
 package turou.fantasy_metropolis.fabric.item;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
@@ -15,10 +16,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import turou.fantasy_metropolis.fabric.RegisterHandler;
+import turou.fantasy_metropolis.fabric.state.payload.OrbitalStrikePayload;
 import turou.fantasy_metropolis.fabric.util.DamageUtil;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
@@ -72,9 +75,19 @@ public class ItemSwordWhiter extends SwordItem {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (hand.equals(InteractionHand.MAIN_HAND) && player.isShiftKeyDown()) {
-            if (!level.isClientSide) {
-                player.sendSystemMessage(Component.translatable("whiter_sword.kill_range"));
-                int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrDefault(RegisterHandler.SWORD_RANGE, 0);
+            if (!level.isClientSide()) {
+                BlockPos playerPos = player.blockPosition();
+
+                // Send orbital strike packet to all clients
+                if (level instanceof ServerLevel serverLevel) {
+                    for (var serverPlayer : serverLevel.players()) {
+                        ServerPlayNetworking.send(serverPlayer, new OrbitalStrikePayload(playerPos));
+                    }
+                }
+
+                player.displayClientMessage(Component.translatable("whiter_sword.orbital_strike"), false);
+                int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrDefault(RegisterHandler.SWORD_RANGE,
+                        0);
                 DamageUtil.hurtRange(range, player, level, true);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
