@@ -1,0 +1,14 @@
+{
+  "orbital_strike": {
+    "subtitle": "subtitle.fantasy_metropolis.orbital_strike",
+    "sounds": [
+      {
+        "name": "fantasy_metropolis:railgun-shoot",
+        "volume": 1.0,
+        "pitch": 1.0,
+        "attenuation_distance": 500
+      }
+    ],
+    "category": "player"
+  }
+}

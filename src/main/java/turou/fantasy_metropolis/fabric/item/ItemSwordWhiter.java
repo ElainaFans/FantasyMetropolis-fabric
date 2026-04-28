@@ -3,6 +3,8 @@ package turou.fantasy_metropolis.fabric.item;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +21,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
+import turou.fantasy_metropolis.fabric.FantasyMetropolis;
+import turou.fantasy_metropolis.fabric.NetworkHandler;
+import turou.fantasy_metropolis.fabric.RegisterHandler;
 import turou.fantasy_metropolis.fabric.util.DamageUtil;
 import turou.fantasy_metropolis.fabric.util.PlayerUtil;
 
@@ -70,6 +79,8 @@ public class ItemSwordWhiter extends SwordItem {
         return returnValue;
     }
 
+    private static final double STRIKE_SOUND_RANGE = 500.0;
+
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (hand.equals(InteractionHand.MAIN_HAND) && player.isShiftKeyDown()) {
@@ -77,6 +88,26 @@ public class ItemSwordWhiter extends SwordItem {
                 player.sendSystemMessage(Component.translatable("whiter_sword.kill_range"));
                 int range = player.getItemInHand(InteractionHand.MAIN_HAND).getOrCreateTag().getInt("range");
                 DamageUtil.hurtRange(range, player, level, true);
+
+                // Trigger orbital strike effect + sound for nearby players
+                double px = player.getX();
+                double py = player.getY();
+                double pz = player.getZ();
+                level.getEntitiesOfClass(ServerPlayer.class,
+                        new AABB(player.blockPosition()).inflate(STRIKE_SOUND_RANGE)).forEach(serverPlayer -> {
+                    // Send shader trigger packet
+                    FriendlyByteBuf buf = PacketByteBufs.create();
+                    buf.writeDouble(px);
+                    buf.writeDouble(py);
+                    buf.writeDouble(pz);
+                    ServerPlayNetworking.send(serverPlayer, NetworkHandler.ORBITAL_STRIKE_PACKET, buf);
+
+                    // Play sound server-side
+                    serverPlayer.playNotifySound(RegisterHandler.ORBITAL_STRIKE_SOUND, SoundSource.PLAYERS, 1.0f, 1.0f);
+                });
+
+                // Track this strike for area-based stop detection
+                FantasyMetropolis.trackStrike(px, py, pz, level);
             }
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
         }

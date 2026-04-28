@@ -1,13 +1,16 @@
 package turou.fantasy_metropolis.fabric.client;
 
 import dev.felnull.specialmodelloader.api.event.SpecialModelLoaderEvents;
+import ladysnake.satin.api.event.PostWorldRenderCallback;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import turou.fantasy_metropolis.fabric.EventHandler;
 import turou.fantasy_metropolis.fabric.FantasyMetropolis;
 import turou.fantasy_metropolis.fabric.NetworkHandler;
 import turou.fantasy_metropolis.fabric.client.player.WhiterCombatRenderer;
+import turou.fantasy_metropolis.fabric.client.rendering.OrbitalStrikeShader;
 import turou.fantasy_metropolis.fabric.state.container.SimpleContainer;
 
 import java.util.HashMap;
@@ -25,5 +28,9 @@ public class FantasyMetropolisClient implements ClientModInitializer {
         });
         EventHandler.registerClientEvents();
         NetworkHandler.registerClientPackets();
+
+        // Register orbital strike shader events
+        ClientTickEvents.END_CLIENT_TICK.register(OrbitalStrikeShader.INSTANCE);
+        PostWorldRenderCallback.EVENT.register(OrbitalStrikeShader.INSTANCE);
     }
 }
